@@ -47,9 +47,9 @@ import prefuse.data.event.TupleSetListener;
 import prefuse.data.io.TreeMLReader;
 import prefuse.data.search.PrefixSearchTupleSet;
 import prefuse.data.tuple.TupleSet;
+import prefuse.render.AbstractShapeRenderer;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
-import prefuse.render.AbstractShapeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.FontLib;
@@ -68,7 +68,7 @@ import prefuse.visual.sort.TreeDepthItemSorter;
  */
 public class TreeView extends Display {
 
-    public static final String TREE_CHI = "/chi-ontology.xml.gz";
+    public static final String TREE_CHI = "data/chi-ontology.xml.gz";
     
     private static final String tree = "tree";
     private static final String treeNodes = "tree.nodes";
@@ -78,7 +78,7 @@ public class TreeView extends Display {
     private EdgeRenderer m_edgeRenderer;
     
     private String m_label = "label";
-    private int m_orientation = Constants.ORIENT_LEFT_RIGHT;
+    private int m_orientation = Constants.ORIENT_TOP_BOTTOM;
     
     public TreeView(Tree t, String label) {
         super(new Visualization());
@@ -88,9 +88,10 @@ public class TreeView extends Display {
         
         m_nodeRenderer = new LabelRenderer(m_label);
         m_nodeRenderer.setRenderType(AbstractShapeRenderer.RENDER_TYPE_FILL);
-        m_nodeRenderer.setHorizontalAlignment(Constants.LEFT);
+        m_nodeRenderer.setHorizontalAlignment(Constants.CENTER);
         m_nodeRenderer.setRoundedCorner(8,8);
-        m_edgeRenderer = new EdgeRenderer(Constants.EDGE_TYPE_CURVE);
+        m_edgeRenderer = new EdgeRenderer(Constants.EDGE_TYPE_LINE);
+//        m_edgeRenderer.setArrowType(Constants.EDGE_ARROW_REVERSE);
         
         DefaultRendererFactory rf = new DefaultRendererFactory(m_nodeRenderer);
         rf.add(new InGroupPredicate(treeEdges), m_edgeRenderer);
@@ -138,6 +139,8 @@ public class TreeView extends Display {
         ActionList filter = new ActionList();
         filter.add(new FisheyeTreeFilter(tree, 2));
         filter.add(new FontAction(treeNodes, FontLib.getFont("Tahoma", 16)));
+        filter.add(new ColorAction(treeEdges, VisualItem.FILLCOLOR, 
+        	    ColorLib.rgb(200,200,200)));
         filter.add(treeLayout);
         filter.add(subLayout);
         filter.add(textColor);

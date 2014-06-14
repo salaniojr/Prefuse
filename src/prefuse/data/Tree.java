@@ -59,7 +59,7 @@ public class Tree extends Graph {
      * Create a new, empty Tree.
      */
     public Tree() {
-        super(new Table(), false);
+        super(new Table(), true);
     }
     
     /**
@@ -104,7 +104,7 @@ public class Tree extends Graph {
     public Tree(Table nodes, Table edges, String nodeKey,
             String sourceKey, String targetKey)
     {
-        super(nodes, edges, false, nodeKey, sourceKey, targetKey);
+        super(nodes, edges, true, nodeKey, sourceKey, targetKey);
         
         for ( IntIterator rows = nodes.rows(); rows.hasNext(); ) {
             int n = rows.nextInt();

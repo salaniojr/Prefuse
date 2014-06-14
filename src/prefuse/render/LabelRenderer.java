@@ -386,7 +386,7 @@ public class LabelRenderer extends AbstractShapeRenderer {
      * @see prefuse.render.Renderer#render(java.awt.Graphics2D, prefuse.visual.VisualItem)
      */
     public void render(Graphics2D g, VisualItem item) {
-        RectangularShape shape = (RectangularShape)getShape(item);
+    	Shape shape = getShape(item);
         if ( shape == null ) return;
         
         // fill the shape, if requested
@@ -404,8 +404,20 @@ public class LabelRenderer extends AbstractShapeRenderer {
         double size = item.getSize();
         boolean useInt = 1.5 > Math.max(g.getTransform().getScaleX(),
                                         g.getTransform().getScaleY());
-        double x = shape.getMinX() + size*m_horizBorder;
-        double y = shape.getMinY() + size*m_vertBorder;
+        
+        boolean isRectangle = shape instanceof RectangularShape;
+        double minX = isRectangle ? ((RectangularShape)shape).getMinX() : item.getX();
+        double minY = isRectangle ? ((RectangularShape)shape).getMinY() : item.getY() - 10;
+        
+        double x = minX + size*m_horizBorder;
+        double y = minY + size*m_vertBorder;
+        
+        double maxX = isRectangle ? ((RectangularShape)shape).getMaxX() : item.getX()+20;
+        double maxY = isRectangle ? ((RectangularShape)shape).getMaxY() : item.getY()+20;
+        double centerX = isRectangle ? ((RectangularShape)shape).getCenterX() : (x + 50) / 2;
+        double centerY = isRectangle ? ((RectangularShape)shape).getCenterY() : (y + 50) / 2;
+        double width = isRectangle ? ((RectangularShape)shape).getWidth() : 50;
+        double height = isRectangle ? ((RectangularShape)shape).getHeight() : 50;
         
         // render image
         if ( img != null ) {            
@@ -419,13 +431,14 @@ public class LabelRenderer extends AbstractShapeRenderer {
                 x += w + size*m_imageMargin;
                 break;
             case Constants.RIGHT:
-                ix = shape.getMaxX() - size*m_horizBorder - w;
+            	
+                ix = maxX - size*m_horizBorder - w;
                 break;
             case Constants.TOP:
                 y += h + size*m_imageMargin;
                 break;
             case Constants.BOTTOM:
-                iy = shape.getMaxY() - size*m_vertBorder - h;
+                iy = maxY - size*m_vertBorder - h;
                 break;
             default:
                 throw new IllegalStateException(
@@ -441,10 +454,10 @@ public class LabelRenderer extends AbstractShapeRenderer {
                 case Constants.TOP:
                     break;
                 case Constants.BOTTOM:
-                    iy = shape.getMaxY() - size*m_vertBorder - h;
+                    iy = maxY - size*m_vertBorder - h;
                     break;
                 case Constants.CENTER:
-                    iy = shape.getCenterY() - h/2;
+                    iy = centerY - h/2;
                     break;
                 }
                 break;
@@ -455,10 +468,10 @@ public class LabelRenderer extends AbstractShapeRenderer {
                 case Constants.LEFT:
                     break;
                 case Constants.RIGHT:
-                    ix = shape.getMaxX() - size*m_horizBorder - w;
+                    ix = maxX - size*m_horizBorder - w;
                     break;
                 case Constants.CENTER:
-                    ix = shape.getCenterX() - w/2;
+                    ix = centerX - w/2;
                     break;
                 }
                 break;
@@ -486,7 +499,7 @@ public class LabelRenderer extends AbstractShapeRenderer {
             switch ( m_imagePos ) {
             case Constants.TOP:
             case Constants.BOTTOM:
-                tw = shape.getWidth() - 2*size*m_horizBorder;
+                tw = width - 2*size*m_horizBorder;
                 break;
             default:
                 tw = m_textDim.width;
@@ -497,7 +510,7 @@ public class LabelRenderer extends AbstractShapeRenderer {
             switch ( m_imagePos ) {
             case Constants.LEFT:
             case Constants.RIGHT:
-                th = shape.getHeight() - 2*size*m_vertBorder;
+                th = height - 2*size*m_vertBorder;
                 break;
             default:
                 th = m_textDim.height;
